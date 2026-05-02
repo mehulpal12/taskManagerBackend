@@ -4,7 +4,7 @@ import { connectDB } from "./config/db.js";
 
 dotenv.config();
 
-connectDB();
+connectDB().then(() => console.log("db connected 2"));
 
 
 
@@ -12,8 +12,6 @@ app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });
 
-app.use('/', (req,res)=>{
-  res.json({
-    message: "Hello World"
-  })
-})
+app.get('/', (req, res) => {
+  res.status(200).send("Backend is running successfully!");
+});
