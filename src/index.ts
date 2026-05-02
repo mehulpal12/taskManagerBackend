@@ -8,10 +8,7 @@ connectDB().then(() => console.log("db connected 2"));
 
 
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
-});
-
-app.get('/', (req, res) => {
-  res.status(200).send("Backend is running successfully!");
-});
+export default async function handler(req: any, res: any) {
+  await connectDB();
+  return app(req, res);
+}
