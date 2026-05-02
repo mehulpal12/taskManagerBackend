@@ -4,24 +4,30 @@ import jwt from "jsonwebtoken";
 
 
 export const signup = async (data: any) => {
-  console.log(data)
-  const { name, email, password } = data;
+  const { name, userName, fullName, email, password } = data;
 
   // Basic validation
-  if (!name || !email || !password) {
-    throw new Error("name, email and password are required");
+  if (!email || !password || (!name && !userName && !fullName)) {
+    throw new Error("Email, password, and a name are required");
+  }
+
+  // Check if user already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new Error("User with this email already exists");
   }
 
   // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Create user (only required fields)
+  // Create user
   const user = await User.create({
-        userName : name,
-        email,
-        password: hashedPassword,
-        fullName : name
-    });
+    userName: userName || name || email.split("@")[0],
+    fullName: fullName || name || userName || "New User",
+    email,
+    password: hashedPassword,
+  });
+
 
   // Remove password before returning
   const userObj = user.toObject();
@@ -45,4 +51,6 @@ export const login = async (data: any) => {
   return { user, token };
 };
 
-
+export const getAllUsers = async () => {
+  return await User.find({}, "userName email fullName _id").lean();
+};

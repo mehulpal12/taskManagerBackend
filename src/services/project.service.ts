@@ -79,7 +79,7 @@ export const removeMemberFromProject = async (
 // 🔹 Get Members
 export const getProjectMembers = async (projectId: string) => {
   const project = await Project.findById(projectId)
-    .populate("members.user", "name email");
+    .populate("members.user", "userName fullName email");
 
   if (!project) throw new Error("Project not found");
 
